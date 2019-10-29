@@ -1,0 +1,12 @@
+        - module Util
+        - 
+        - id(x...) = x
+        - 
+        - # This is a stupid trick, but I'm kind of proud of it.
+        - function broadcast_size(arrays...)
+ 11281485     broadcasted = id.(arrays...)
+     1632     broadcasted isa Tuple ? (1,) : size(broadcasted)
+        - end
+        - 
+        - end
+        - 
