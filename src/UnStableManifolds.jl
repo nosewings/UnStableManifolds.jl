@@ -5,9 +5,14 @@ module UnStableManifolds
 # think the developers want me to hate their language.
 
 include("UnStableManifolds/Util.jl")
+
+include("UnStableManifolds/FindDoublingCycles.jl")
 include("UnStableManifolds/Iterates.jl")
 include("UnStableManifolds/Maps.jl")
 
+include("UnStableManifolds/Batch.jl")
+
+using .FindDoublingCycles: find_doubling_cycles
 using .Iterates: iterates
 
 end

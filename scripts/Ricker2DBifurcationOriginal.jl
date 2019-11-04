@@ -1,14 +1,13 @@
-using Strided: StridedView
+using CuArrays: CuArray
 using UnStableManifolds.Batch: bifurcation_plot_2d
-using UnStableManifolds.Maps: ricker_2d
-using DoubleFloats
+using UnStableManifolds.Maps.CUDA: ricker_2d
 
 let
-    r = collect(DoubleFloat(0.0):DoubleFloat(0.001):DoubleFloat(3.0))
-    r = StridedView(reshape([i for i in r for j in r], length(r), length(r)))
+    r = collect(0.0001:0.005:3.0)
+    r = reshape([i for i in r for j in r], length(r), length(r))
     s = copy(r')
-    x = StridedView(fill((DoubleFloat(0.1), DoubleFloat(0.5)), size(r)...))
-    a = StridedView(fill(DoubleFloat(0.5), size(r)...))
+    x = fill((0.1, 0.5), size(r)...)
+    a = fill(0.5, size(r)...)
     b = a
     colors = [
         "black",
@@ -29,6 +28,8 @@ let
         s,
         make = 2000,
         show_iterations = 100,
+        convert_to_before = CuArray,
+        convert_to_after = Array,
         colors = colors,
         plot_x = r,
         plot_y = s,

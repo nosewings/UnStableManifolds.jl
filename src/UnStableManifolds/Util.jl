@@ -6,4 +6,12 @@ function broadcast_size(x...)
     broadcasted isa Tuple ? (1,) : size(broadcasted)
 end
 
+function Base.:-(x :: Tuple, y :: Tuple)
+    x .- y
+end
+
+function Base.isapprox(x :: Tuple, y :: Tuple; kwargs...)
+    Base.isapprox([x...], [y...]; kwargs...)
+end
+
 end
