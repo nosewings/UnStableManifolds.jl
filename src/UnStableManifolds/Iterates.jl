@@ -4,8 +4,7 @@ using ..Util: broadcast_size
 
 function iterates(
     f,
-    x :: AbstractArray,
-    args...,
+    x,
     ;
     make,
     keep = make + 1,
@@ -17,7 +16,7 @@ function iterates(
     keep ≥ 1 || throw(ArgumentError)
     keep ≤ make + 1 || throw(ArgumentError)
 
-    buffer_size = broadcast_size(x, args...)
+    buffer_size = size(f(x))
     buffer_size = (buffer_size..., keep)
     buffer = similar(x, buffer_size)
 
@@ -30,7 +29,7 @@ function iterates(
         mod(i - 1, length_slices) + 1
     end
     @inline function get_slice(i)
-        slices[get_slice_index(i)]
+        @inbounds slices[get_slice_index(i)]
     end
 
     # Unfortunately, the zeroth iteration is special.
@@ -56,28 +55,13 @@ function iterates(
             println(stderr, "iteration ", i)
         end
         slice = get_slice(i)
-        slice .= f.(x, args...)
+        slice .= f(x)
         x = slice
-        do_callback(i)
         i += 1
     end
     i = get_slice_index(i)
+    slices = map(Array, slices)
     cat(slices[i:end]..., slices[1:(i - 1)]..., dims=length(buffer_size))
-end
-
-# If we had higher-kinded types (and some more powerful static type expressions;
-# e.g., "strict subtype" or "is not abstract"), we could say "all of these
-# values need to be a subtype of a common concrete array type." Alas, we cannot.
-#
-# If we had a nontrivial least upper bound operator on types, we could at least
-# enforce that invariant dynamically. Alas, we cannot.
-#
-# So the only option is the lame one: just default to `Array` if `x` isn't an
-# `AbstractArray`.
-#
-# Why even bother with PLT?
-function iterates(f, x, args...; kwargs...)
-    iterates(f, [x], args...; kwargs...)
 end
 
 end

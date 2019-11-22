@@ -11,7 +11,7 @@ function Base.:-(x :: Tuple, y :: Tuple)
 end
 
 function Base.isapprox(x :: Tuple, y :: Tuple; kwargs...)
-    Base.isapprox([x...], [y...]; kwargs...)
+    Base.isapprox(collect(x), collect(y); kwargs...)
 end
 
 end
